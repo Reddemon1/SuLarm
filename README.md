@@ -31,5 +31,5 @@ Kontribusi sangat diterima! Silakan buat pull request untuk menambahkan fitur ba
 
 ## Lisensi
 
-Sularm dilisensikan di bawah KOBAR.
+Sularm dilisensikan di bawah 4 Musketeer and 1 enemy.
 
