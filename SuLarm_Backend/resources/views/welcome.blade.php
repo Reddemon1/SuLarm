@@ -8,6 +8,7 @@
 </head>
 <body>
     <h1>Hello Kawand kawand ku dskjnfjkdsnj</h1>
-    <a href="Rio.blade.php" type="button">Cuky<a>
+    <a href="Rio.blade.php" type="button"><a>
+        <h1>apapun</h1>
 </body>
 </html>
