@@ -7,6 +7,6 @@
     <title>Document</title>
 </head>
 <body>
-    
+    <a href="welcome.blade.php" type="button"><a>
 </body>
 </html>
