@@ -1,8 +1,14 @@
 package com.example.sularm.api;
 
 import com.example.sularm.api.interfaces.ApiService;
+import com.example.sularm.model.Schedule;
+
+import java.util.List;
 
 import okhttp3.OkHttpClient;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
@@ -17,10 +23,6 @@ public class InitDataFromAPI {
                 .addConverterFactory(GsonConverterFactory.create())
                 .build();
         apiService = api.create(ApiService.class);
-    }
-
-    public void getData(){
-        apiService.getSchedule();
     }
 
     //    GitHubService service = retrofit.create(GitHubService.class);
