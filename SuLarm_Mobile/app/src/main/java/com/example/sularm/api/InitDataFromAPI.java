@@ -1,5 +1,7 @@
 package com.example.sularm.api;
 
+import android.util.Log;
+
 import com.example.sularm.api.interfaces.ApiService;
 import com.example.sularm.model.Schedule;
 
@@ -14,16 +16,33 @@ import retrofit2.converter.gson.GsonConverterFactory;
 
 
 public class InitDataFromAPI {
-    public ApiService apiService;
+    private ApiService apiService;
 
     public void initApi(){
         OkHttpClient client = new OkHttpClient();
         Retrofit api = new Retrofit.Builder()
-                .baseUrl("http://localhost:8000/api")
+                .baseUrl("http://10.0.2.2:8000/api/")
                 .addConverterFactory(GsonConverterFactory.create())
                 .build();
         apiService = api.create(ApiService.class);
+
+//        apiService.getSchedule().enqueue(new Callback<List<Schedule>>() {
+//            @Override
+//            public void onResponse(Call<List<Schedule>> call, Response<List<Schedule>> response) {
+//                Log.e("CUKY", "bisa ");
+//            }
+//
+//            @Override
+//            public void onFailure(Call<List<Schedule>> call, Throwable throwable) {
+//                Log.e("CUKY", "gabisa ");
+//            }
+//        });
     }
 
+    public ApiService getApiService() {
+        return apiService;
+    }
+
+//    public Ca
     //    GitHubService service = retrofit.create(GitHubService.class);
 }

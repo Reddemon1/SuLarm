@@ -8,13 +8,13 @@ public class Schedule {
     @SerializedName("id")
     private Integer id;
     @SerializedName("time")
-    private Time time;
+    private String time;
     @SerializedName("arrived_before")
-    private Time arrivedBefore;
+    private String arrivedBefore;
     @SerializedName("location")
     private String location;
 
-    public Schedule(Integer id, Time time, Time arrivedBefore, String location) {
+    public Schedule(Integer id, String time, String arrivedBefore, String location) {
         this.id = id;
         this.time = time;
         this.arrivedBefore = arrivedBefore;
@@ -28,19 +28,19 @@ public class Schedule {
         this.id = id;
     }
 
-    public Time getTime() {
+    public String getTime() {
         return time;
     }
 
-    public void setTime(Time time) {
+    public void setTime(String time) {
         this.time = time;
     }
 
-    public Time getArrivedBefore() {
+    public String getArrivedBefore() {
         return arrivedBefore;
     }
 
-    public void setArrivedBefore(Time arrivedBefore) {
+    public void setArrivedBefore(String arrivedBefore) {
         this.arrivedBefore = arrivedBefore;
     }
 

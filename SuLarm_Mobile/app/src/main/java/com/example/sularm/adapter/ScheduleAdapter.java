@@ -10,6 +10,8 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.sularm.R;
 import com.example.sularm.model.Schedule;
 
+import java.lang.reflect.Array;
+import java.util.ArrayList;
 import java.util.List;
 
 public class ScheduleAdapter extends RecyclerView.Adapter<ScheduleViewHolder> {
@@ -29,13 +31,13 @@ public class ScheduleAdapter extends RecyclerView.Adapter<ScheduleViewHolder> {
 
     @Override
     public void onBindViewHolder(@NonNull ScheduleViewHolder holder, int position) {
-        holder.time.setText(scheduleList.get(position).getTime().toString());
+        holder.time.setText(scheduleList.get(position).getTime());
         holder.location.setText(scheduleList.get(position).getLocation());
-        holder.arrivedBefore.setText(scheduleList.get(position).getArrivedBefore().toString());
+        holder.arrivedBefore.setText(scheduleList.get(position).getArrivedBefore());
     }
 
     @Override
     public int getItemCount() {
-        return scheduleList.size();
+        return 0;
     }
 }
