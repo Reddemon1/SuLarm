@@ -8,6 +8,8 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
+import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -16,12 +18,14 @@ import com.example.sularm.adapter.ScheduleAdapter;
 import com.example.sularm.model.Schedule;
 import com.example.sularm.viewmodel.ScheduleViewModel;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
     private RecyclerView scheduleList;
-//    private List<Schedule> scList;
-    private ScheduleViewModel scheduleViewModel = new ScheduleViewModel();
+    private List<Schedule> scList = new ArrayList<>();
+    private ScheduleAdapter scheduleAdapter;
+    private ScheduleViewModel scheduleViewModel;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -33,12 +37,21 @@ public class MainActivity extends AppCompatActivity {
             return insets;
         });
 
-        scheduleViewModel.readScheduleAPI();
         scheduleList = findViewById(R.id.scheduleList);
-        scheduleList.setLayoutManager(new LinearLayoutManager(this));
-        scheduleList.setAdapter(new ScheduleAdapter(getApplicationContext(),scheduleViewModel.getScheduleList()));
-        scheduleViewModel.getScheduleList().forEach(schedule -> {
-            Log.e("Get_Data",  schedule.getLocation()+" "+schedule.getTime()+" "+schedule.getArrivedBefore());
+        scheduleList.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
+//        scheduleAdapter = new ScheduleAdapter(getApplicationContext(),scheduleViewModel.getScheduleList().getValue());
+        scheduleAdapter = new ScheduleAdapter(getApplicationContext(),scList);
+        scheduleList.setAdapter(scheduleAdapter);
+        scheduleViewModel = new ViewModelProvider(this).get(ScheduleViewModel.class);
+        scheduleViewModel.getScheduleList().observe(this, new Observer<List<Schedule>>() {
+            @Override
+            public void onChanged(List<Schedule> schedules) {
+                scList.clear();
+                scList.addAll(schedules);
+                scheduleAdapter.notifyDataSetChanged();
+            }
         });
+        scheduleViewModel.readScheduleAPI();
+
     }
 }

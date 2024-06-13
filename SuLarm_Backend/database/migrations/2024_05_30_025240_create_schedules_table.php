@@ -17,7 +17,9 @@ return new class extends Migration
             $table->id()->autoIncrement();
             $table->time("time");
             $table->time("arrived_before");
+            $table->time("estimated_travel_time");
             $table->string("location",255);
+            $table->boolean("status");
             $table->timestamps();
         });
     }

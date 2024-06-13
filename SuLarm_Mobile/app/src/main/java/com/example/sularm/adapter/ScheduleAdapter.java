@@ -34,10 +34,16 @@ public class ScheduleAdapter extends RecyclerView.Adapter<ScheduleViewHolder> {
         holder.time.setText(scheduleList.get(position).getTime());
         holder.location.setText(scheduleList.get(position).getLocation());
         holder.arrivedBefore.setText(scheduleList.get(position).getArrivedBefore());
+        if (scheduleList.get(position).getStatus().equals(1)){
+            holder.powerSwitch.setChecked(true);
+        }else {
+            holder.powerSwitch.setChecked(false);
+        }
+//        holder.
     }
 
     @Override
     public int getItemCount() {
-        return 0;
+        return scheduleList.size();
     }
 }

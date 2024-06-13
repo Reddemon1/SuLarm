@@ -12,7 +12,7 @@ import retrofit2.http.POST;
 
 public interface ApiService {
     @GET("Schedule")
-    Call<List<Schedule>> getSchedule();
+    Call<List<Schedule>>  getSchedule();
 
     @POST("Schedule/")
     Call<Schedule> createSchedule(@Body Schedule schedule);

@@ -21,13 +21,13 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
 
-Route::group(['prefix' => 'auth'], function () {
-    // Student Auth
-    Route::post('login', [AuthController::class, 'login']);
-    Route::post('logout', [AuthController::class, 'logout']);
-    Route::get('me', [AuthController::class, 'me']);
-    Route::get('siswa', [AuthController::class, 'siswa']);
-});
+// Route::group(['prefix' => 'auth'], function () {
+//     // Student Auth
+//     Route::post('login', [AuthController::class, 'login']);
+//     Route::post('logout', [AuthController::class, 'logout']);
+//     Route::get('me', [AuthController::class, 'me']);
+//     Route::get('siswa', [AuthController::class, 'siswa']);
+// });
 
 Route::resource('Schedule', ScheduleController::class);
 Route::delete('Schedule/{id}',[ScheduleController::class,'delete']);

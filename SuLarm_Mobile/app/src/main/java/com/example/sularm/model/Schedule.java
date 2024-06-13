@@ -13,12 +13,33 @@ public class Schedule {
     private String arrivedBefore;
     @SerializedName("location")
     private String location;
+    @SerializedName("status")
+    private Integer status;
+
+    @SerializedName("estimated_travel_time")
+    private String estimatedTravelTime;
+
+    public String getEstimatedTravelTime() {
+        return estimatedTravelTime;
+    }
+
+    public void setEstimatedTravelTime(String estimatedTravelTime) {
+        this.estimatedTravelTime = estimatedTravelTime;
+    }
 
     public Schedule(Integer id, String time, String arrivedBefore, String location) {
         this.id = id;
         this.time = time;
         this.arrivedBefore = arrivedBefore;
         this.location = location;
+    }
+
+    public Integer getStatus() {
+        return status;
+    }
+
+    public void setStatus(Integer status) {
+        this.status = status;
     }
     public Integer getId() {
         return id;

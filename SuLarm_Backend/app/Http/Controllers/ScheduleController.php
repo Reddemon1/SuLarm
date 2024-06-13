@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Schedule;
+use Dflydev\DotAccessData\Data;
 use Illuminate\Http\Request;
 use PhpParser\Node\Stmt\Return_;
 use Ramsey\Uuid\Type\Integer;
@@ -27,8 +28,9 @@ class ScheduleController extends Controller
      */
     public function store(Request $request)
     {
-
-        $newSchedule = Schedule::create($request->all());
+        $data = $request->all();
+        $data['status'] = false;
+        $newSchedule = Schedule::create($data);
         return response()->json($newSchedule,200);
     }
 

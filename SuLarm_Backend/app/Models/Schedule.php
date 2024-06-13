@@ -12,5 +12,7 @@ class Schedule extends Model
         'time',
         'arrived_before',
         'location',
+        'estimated_travel_time',
+        'status'
     ];
 }
