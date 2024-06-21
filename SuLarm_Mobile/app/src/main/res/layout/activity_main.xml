@@ -10,9 +10,24 @@
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/scheduleList"
         android:layout_width="match_parent"
-        android:layout_height="729dp"
+        android:layout_height="705dp"
         android:layout_marginStart="1dp"
-        android:layout_marginTop="1dp"
+        android:layout_marginTop="24dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.492"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/newScBtn" />
+
+    <Button
+        android:id="@+id/newScBtn"
+        android:layout_width="278dp"
+        android:layout_height="87dp"
+        android:layout_marginStart="85dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="85dp"
+        android:text="New Alarm"
+        android:textSize="34sp"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 </androidx.constraintlayout.widget.ConstraintLayout>

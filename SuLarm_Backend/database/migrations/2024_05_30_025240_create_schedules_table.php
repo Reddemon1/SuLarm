@@ -18,7 +18,10 @@ return new class extends Migration
             $table->time("time");
             $table->time("arrived_before");
             $table->time("estimated_travel_time");
-            $table->string("location",255);
+            $table->string("location_end",255);
+            $table->string("end_coor",255);
+            $table->string("location_start",255);
+            $table->string("start_coor",255);
             $table->boolean("status");
             $table->timestamps();
         });

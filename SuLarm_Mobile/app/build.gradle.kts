@@ -39,6 +39,7 @@ dependencies {
     implementation("com.squareup.okhttp3:okhttp")
     implementation("com.squareup.okhttp3:logging-interceptor")
     implementation("com.squareup.retrofit2:converter-gson:2.11.0")
+    implementation("com.mapbox.maps:android:11.4.1")
 //    implementation(files("libs\\converter-gson-2.11.0.jar"))
 
     testImplementation(libs.junit)

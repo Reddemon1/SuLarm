@@ -52,9 +52,11 @@ class ScheduleController extends Controller
      * @param  \App\Models\Schedule  $schedule
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, Schedule $schedule)
+    public function update(Request $request, $id)
     {
-        //
+        $schedule = Schedule::find($id);
+        $schedule->update($request->all());
+        return response()->json($schedule);
     }
 
     /**

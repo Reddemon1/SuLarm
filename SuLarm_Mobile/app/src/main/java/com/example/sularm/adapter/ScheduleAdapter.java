@@ -2,6 +2,7 @@ package com.example.sularm.adapter;
 
 import android.content.Context;
 import android.view.LayoutInflater;
+import android.view.View;
 import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
@@ -17,10 +18,12 @@ import java.util.List;
 public class ScheduleAdapter extends RecyclerView.Adapter<ScheduleViewHolder> {
     Context context;
     List<Schedule> scheduleList;
+    OnSwitch onSwitch;
 
-    public ScheduleAdapter(Context context, List<Schedule> scheduleList) {
+    public ScheduleAdapter(Context context, List<Schedule> scheduleList,OnSwitch onSwitch) {
         this.context = context;
         this.scheduleList = scheduleList;
+        this.onSwitch = onSwitch;
     }
 
     @NonNull
@@ -39,6 +42,18 @@ public class ScheduleAdapter extends RecyclerView.Adapter<ScheduleViewHolder> {
         }else {
             holder.powerSwitch.setChecked(false);
         }
+
+        holder.powerSwitch.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (holder.powerSwitch.isChecked()){
+                    scheduleList.get(position).setStatus(1);
+                }else {
+                    scheduleList.get(position).setStatus(0);
+                }
+                onSwitch.onSwitchClick(position, scheduleList.get(position));
+            }
+        });
 //        holder.
     }
 
