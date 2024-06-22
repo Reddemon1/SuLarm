@@ -1,6 +1,9 @@
 package com.example.sularm.viewmodel;
 
+import static androidx.core.content.ContextCompat.startActivity;
+
 import android.content.Context;
+import android.content.Intent;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -8,6 +11,7 @@ import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModel;
 
+import com.example.sularm.activity.AddAlarmActivity;
 import com.example.sularm.activity.MainActivity;
 import com.example.sularm.api.InitDataFromAPI;
 import com.example.sularm.model.Schedule;
@@ -45,10 +49,46 @@ public class ScheduleViewModel extends ViewModel {
             }
         });
     }
-    public void changeStatus(Schedule schedule,Context context){
-        RequestSchedule requestSchedule = new RequestSchedule(schedule.getTime(), schedule.getArrivedBefore(), schedule.getLocation(), schedule.getStatus(), schedule.getEstimatedTravelTime());
+    public RequestSchedule convertToBodyRequest(Schedule schedule){
+        RequestSchedule requestSchedule = new RequestSchedule(
+                schedule.getTime(),
+                schedule.getArrivedBefore(),
+                schedule.getEstimatedTravelTime(),
+                schedule.getPreparationTime(),
+                schedule.getLocationEnd(),
+                schedule.getEndCoor(),
+                schedule.getLocationStart(),
+                schedule.getStartCoor(),
+                schedule.getStatus()
+        );
+        return requestSchedule;
+    }
+    public void deleteSchedule(Integer id, Context context){
+        api.getApiService().deleteSchedule(id).enqueue(new Callback<Schedule>() {
+            @Override
+            public void onResponse(Call<Schedule> call, Response<Schedule> response) {
+                Toast.makeText(context, "Alarm Deleted", Toast.LENGTH_LONG).show();
+//                readScheduleAPI();
+            }
 
-        api.getApiService().editSchedule(schedule.getId(), requestSchedule).enqueue(new Callback<Schedule>() {
+            @Override
+            public void onFailure(Call<Schedule> call, Throwable throwable) {
+
+            }
+        });
+    }
+    public void changeStatus(Schedule schedule,Context context){
+        Log.e("APALAH INI", "changeStatus: "+schedule.getId() +" "+schedule.getTime()+
+                        " "+schedule.getArrivedBefore()+
+                " "+schedule.getEstimatedTravelTime()+
+                " "+schedule.getPreparationTime()+
+                " "+schedule.getLocationEnd()+
+                " "+schedule.getEndCoor()+
+                " "+schedule.getLocationStart()+
+                " "+schedule.getStartCoor()+
+                " "+schedule.getStatus());
+
+        api.getApiService().editSchedule(schedule.getId(), convertToBodyRequest(schedule)).enqueue(new Callback<Schedule>() {
             @Override
             public void onResponse(Call<Schedule> call, Response<Schedule> response) {
                 if (schedule.getStatus() == 1){
@@ -64,8 +104,21 @@ public class ScheduleViewModel extends ViewModel {
             }
         });
     }
-    public void newSchedule(){
 
+    public void newSchedule(Schedule schedule, Context context){
+        api.initApi();
+        api.getApiService().createSchedule(convertToBodyRequest(schedule)).enqueue(new Callback<Schedule>() {
+            @Override
+            public void onResponse(Call<Schedule> call, Response<Schedule> response) {
+                Toast.makeText(context, "New Schedule Added", Toast.LENGTH_LONG).show();
+                readScheduleAPI();
+            }
+
+            @Override
+            public void onFailure(Call<Schedule> call, Throwable throwable) {
+                Log.e("APASIH", "onFailure: ",throwable );
+            }
+        });
     }
 
     public void setScheduleList(MutableLiveData<List<Schedule>> scheduleList) {

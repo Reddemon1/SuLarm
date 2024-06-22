@@ -35,7 +35,7 @@ public class ScheduleAdapter extends RecyclerView.Adapter<ScheduleViewHolder> {
     @Override
     public void onBindViewHolder(@NonNull ScheduleViewHolder holder, int position) {
         holder.time.setText(scheduleList.get(position).getTime());
-        holder.location.setText(scheduleList.get(position).getLocation());
+        holder.location.setText(scheduleList.get(position).getLocationEnd());
         holder.arrivedBefore.setText(scheduleList.get(position).getArrivedBefore());
         if (scheduleList.get(position).getStatus().equals(1)){
             holder.powerSwitch.setChecked(true);
@@ -52,6 +52,13 @@ public class ScheduleAdapter extends RecyclerView.Adapter<ScheduleViewHolder> {
                     scheduleList.get(position).setStatus(0);
                 }
                 onSwitch.onSwitchClick(position, scheduleList.get(position));
+            }
+        });
+
+        holder.deleteBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                onSwitch.onDeleteClick(scheduleList.get(position).getId());
             }
         });
 //        holder.

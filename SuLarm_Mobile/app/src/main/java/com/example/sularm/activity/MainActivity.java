@@ -23,6 +23,7 @@ import com.example.sularm.adapter.OnSwitch;
 import com.example.sularm.adapter.ScheduleAdapter;
 import com.example.sularm.model.Schedule;
 import com.example.sularm.viewmodel.ScheduleViewModel;
+import com.mapbox.maps.MapView;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -33,6 +34,7 @@ public class MainActivity extends AppCompatActivity implements OnSwitch {
     private ScheduleAdapter scheduleAdapter;
     private ScheduleViewModel scheduleViewModel;
     private Button newSchedule;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -65,6 +67,7 @@ public class MainActivity extends AppCompatActivity implements OnSwitch {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(MainActivity.this, AddAlarmActivity.class);
+//                intent.putExtra("viewModel", scheduleViewModel);
                 startActivity(intent);
                 finish();
             }
@@ -80,5 +83,19 @@ public class MainActivity extends AppCompatActivity implements OnSwitch {
         sL.postValue(scList);
         scheduleViewModel.setScheduleList(sL);
         scheduleViewModel.changeStatus(schedule, getApplicationContext());
+    }
+
+    @Override
+    public void onDeleteClick(int id) {
+        scheduleViewModel.deleteSchedule(id,getApplicationContext());
+        scheduleViewModel.getScheduleList().observe(this, new Observer<List<Schedule>>() {
+            @Override
+            public void onChanged(List<Schedule> schedules) {
+                scList.clear();
+                scList.addAll(schedules);
+                scheduleAdapter.notifyDataSetChanged();
+            }
+        });
+        scheduleViewModel.readScheduleAPI();
     }
 }

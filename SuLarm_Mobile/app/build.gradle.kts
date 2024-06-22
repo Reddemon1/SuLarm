@@ -40,6 +40,17 @@ dependencies {
     implementation("com.squareup.okhttp3:logging-interceptor")
     implementation("com.squareup.retrofit2:converter-gson:2.11.0")
     implementation("com.mapbox.maps:android:11.4.1")
+    implementation("com.mapbox.search:autofill:2.2.0")
+    implementation("com.mapbox.search:discover:2.2.0")
+    implementation("com.mapbox.search:place-autocomplete:2.2.0")
+    implementation("com.mapbox.search:mapbox-search-android-ui:2.2.0")
+    implementation("com.google.android.material:material:1.3.0")
+//    implementation("androidx.fragment.app.DialogFragment")
+//    implementation("com.mapbox.mapboxsdk:mapbox-android-geocoding:5.3.0")
+//    implementation("com.mapbox.mapboxsdk:mapbox-android-sdk:9.6.2")
+//    implementation("com.mapbox.mapboxsdk:mapbox-sdk-services:5.6.1")
+//    implementation("com.mapbox.mapboxsdk:mapbox-android-geocoding:5.3.0")
+
 //    implementation(files("libs\\converter-gson-2.11.0.jar"))
 
     testImplementation(libs.junit)

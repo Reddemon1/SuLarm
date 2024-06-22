@@ -29,7 +29,7 @@ class ScheduleController extends Controller
     public function store(Request $request)
     {
         $data = $request->all();
-        $data['status'] = false;
+        $data['status'] = true;
         $newSchedule = Schedule::create($data);
         return response()->json($newSchedule,200);
     }

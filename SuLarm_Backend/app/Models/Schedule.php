@@ -11,8 +11,12 @@ class Schedule extends Model
     protected $fillable = [
         'time',
         'arrived_before',
-        'location',
         'estimated_travel_time',
+        'preparation_time',
+        'location_end',
+        'end_coor',
+        'location_start',
+        'start_coor',
         'status'
     ];
 }
