@@ -1,7 +1,10 @@
 package com.example.sularm.viewmodel;
 
+import static androidx.core.content.ContextCompat.getSystemService;
 import static androidx.core.content.ContextCompat.startActivity;
 
+import android.app.AlarmManager;
+import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.util.Log;
@@ -12,6 +15,7 @@ import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModel;
 
 import com.example.sularm.activity.AddAlarmActivity;
+import com.example.sularm.activity.AlarmReceiver;
 import com.example.sularm.activity.MainActivity;
 import com.example.sularm.api.InitDataFromAPI;
 import com.example.sularm.model.Schedule;

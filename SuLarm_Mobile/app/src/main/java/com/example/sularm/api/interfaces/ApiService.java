@@ -27,6 +27,7 @@ public interface ApiService {
     Call<Schedule> editSchedule(@Path("id") int id,
                                 @Body RequestSchedule requestSchedule);
 
+
     @DELETE("Schedule/{id}")
     Call<Schedule> deleteSchedule(@Path("id") int id);
 }

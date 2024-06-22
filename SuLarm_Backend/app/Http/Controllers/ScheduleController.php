@@ -29,7 +29,7 @@ class ScheduleController extends Controller
     public function store(Request $request)
     {
         $data = $request->all();
-        $data['status'] = true;
+        $data['status'] = false;
         $newSchedule = Schedule::create($data);
         return response()->json($newSchedule,200);
     }
@@ -52,6 +52,11 @@ class ScheduleController extends Controller
      * @param  \App\Models\Schedule  $schedule
      * @return \Illuminate\Http\Response
      */
+    public function editStatus($status, $id){ // blom jadi
+        $schedule = Schedule::find($id);
+        $schedule->status = $status;
+        $schedule->update($schedule);        
+    }
     public function update(Request $request, $id)
     {
         $schedule = Schedule::find($id);

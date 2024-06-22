@@ -117,7 +117,12 @@ public class AddAlarmActivity extends AppCompatActivity {
                 preparationPicker.addOnPositiveButtonClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
-                        preparationTime.setText(String.format("%02d",preparationPicker.getHour()) +":"+ String.format("%02d",preparationPicker.getMinute()));
+                        if (preparationPicker.getHour() >= 12){
+                            preparationTime.setText(String.format("%02d",preparationPicker.getHour() - 12) +":"+ String.format("%02d",preparationPicker.getMinute()));
+                        }else{
+
+                            preparationTime.setText(String.format("%02d",preparationPicker.getHour()) +":"+ String.format("%02d",preparationPicker.getMinute()));
+                        }
                     }
                 });
             }

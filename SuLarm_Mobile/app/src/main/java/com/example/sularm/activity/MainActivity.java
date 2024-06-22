@@ -1,6 +1,13 @@
 package com.example.sularm.activity;
 
+import android.app.AlarmManager;
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
+import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -25,7 +32,10 @@ import com.example.sularm.model.Schedule;
 import com.example.sularm.viewmodel.ScheduleViewModel;
 import com.mapbox.maps.MapView;
 
+import java.sql.Time;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity implements OnSwitch {
@@ -33,19 +43,19 @@ public class MainActivity extends AppCompatActivity implements OnSwitch {
     private List<Schedule> scList = new ArrayList<>();
     private ScheduleAdapter scheduleAdapter;
     private ScheduleViewModel scheduleViewModel;
+    private AlarmManager alarmManager;
+    private Calendar calendar, cal_now;
+    private PendingIntent pendingIntent;
     private Button newSchedule;
+    private static final int REQUEST_CODE_NOTIFICATION = 1;
 
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        EdgeToEdge.enable(this);
-        setContentView(R.layout.activity_main);
-        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
-            Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
-            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
-            return insets;
-        });
-
+    public void initData(){
+        createNotificationChannel();
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            if (checkSelfPermission(android.Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) {
+                requestPermissions(new String[]{android.Manifest.permission.POST_NOTIFICATIONS}, REQUEST_CODE_NOTIFICATION);
+            }
+        }
         scheduleList = findViewById(R.id.scheduleList);
         scheduleList.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
 //        scheduleAdapter = new ScheduleAdapter(getApplicationContext(),scheduleViewModel.getScheduleList().getValue());
@@ -61,6 +71,18 @@ public class MainActivity extends AppCompatActivity implements OnSwitch {
             }
         });
         scheduleViewModel.readScheduleAPI();
+    }
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        EdgeToEdge.enable(this);
+        setContentView(R.layout.activity_main);
+        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
+            Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
+            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
+            return insets;
+        });
+        initData();
 
         newSchedule = (Button) findViewById(R.id.newScBtn);
         newSchedule.setOnClickListener(new View.OnClickListener() {
@@ -75,14 +97,60 @@ public class MainActivity extends AppCompatActivity implements OnSwitch {
 
     }
 
+    private void createNotificationChannel(){
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O){
+            CharSequence name = "Notif Sularm";
+            String desc = "Channel for Alarm Manager";
+            int imp = NotificationManager.IMPORTANCE_HIGH;
+            NotificationChannel channel = new NotificationChannel("apaseh", name, imp);
+            channel.setDescription(desc);
+            NotificationManager notificationManager = getSystemService(NotificationManager.class);
+            notificationManager.createNotificationChannel(channel);
+        }
+    }
     @Override
     public void onSwitchClick(int position, Schedule schedule) {
-//        Toast.makeText(getApplicationContext(), schedule.getLocation(),Toast.LENGTH_LONG).show();
         scList.set(position, schedule);
-        MutableLiveData<List<Schedule>> sL = new MutableLiveData<>();
-        sL.postValue(scList);
-        scheduleViewModel.setScheduleList(sL);
+        scheduleViewModel.setScheduleList(new MutableLiveData<>(scList));
         scheduleViewModel.changeStatus(schedule, getApplicationContext());
+
+        String[] time = schedule.getArrivedBefore().split(":");
+        if (schedule.getStatus() == 0) { // Off
+            cancelAlarm(position);
+        } else { // On
+            setAlarm(position, time);
+        }
+    }
+
+
+    private void setAlarm(int position, String[] time) {
+        calendar = Calendar.getInstance();
+        calendar.setTimeInMillis(System.currentTimeMillis());
+        calendar.set(Calendar.HOUR_OF_DAY, Integer.parseInt(time[0]));
+        calendar.set(Calendar.MINUTE, Integer.parseInt(time[1]));
+        calendar.set(Calendar.SECOND, 0);
+        calendar.set(Calendar.MILLISECOND, 0);
+
+        if (calendar.getTimeInMillis() < System.currentTimeMillis()) {
+            calendar.add(Calendar.DAY_OF_MONTH, 1);
+        }
+
+        alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
+        Intent intent = new Intent(MainActivity.this, AlarmReceiver.class);
+        intent.putExtra("position", position);
+        pendingIntent = PendingIntent.getBroadcast(this, position, intent, PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_MUTABLE);
+        alarmManager.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), pendingIntent);
+        Toast.makeText(MainActivity.this, "Alarm Set", Toast.LENGTH_SHORT).show();
+    }
+
+    private void cancelAlarm(int position) {
+        Intent intent = new Intent(MainActivity.this, AlarmReceiver.class);
+        pendingIntent = PendingIntent.getBroadcast(MainActivity.this, position, intent, PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_MUTABLE);
+        if (alarmManager == null) {
+            alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
+        }
+        alarmManager.cancel(pendingIntent);
+        Toast.makeText(MainActivity.this, "Alarm Canceled", Toast.LENGTH_SHORT).show();
     }
 
     @Override
