@@ -95,11 +95,11 @@ public class ScheduleViewModel extends ViewModel {
         api.getApiService().editSchedule(schedule.getId(), convertToBodyRequest(schedule)).enqueue(new Callback<Schedule>() {
             @Override
             public void onResponse(Call<Schedule> call, Response<Schedule> response) {
-                if (schedule.getStatus() == 1){
-                    Toast.makeText(context, "Alarm Turned On", Toast.LENGTH_LONG).show();
-                }else{
-                    Toast.makeText(context, "Alarm Turned Off", Toast.LENGTH_LONG).show();
-                }
+//                if (schedule.getStatus() == 1){
+//                    Toast.makeText(context, "Alarm Turned On", Toast.LENGTH_LONG).show();
+//                }else{
+//                    Toast.makeText(context, "Alarm Turned Off", Toast.LENGTH_LONG).show();
+//                }
             }
 
             @Override

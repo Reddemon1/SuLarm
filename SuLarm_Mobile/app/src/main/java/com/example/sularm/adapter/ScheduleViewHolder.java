@@ -10,8 +10,6 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.sularm.R;
 
-import java.sql.Time;
-
 public class ScheduleViewHolder extends RecyclerView.ViewHolder {
 
     TextView arrivedBefore, time, location;
@@ -21,7 +19,7 @@ public class ScheduleViewHolder extends RecyclerView.ViewHolder {
         super(itemView);
         arrivedBefore = itemView.findViewById(R.id.arrivedBefore);
         location = itemView.findViewById(R.id.location);
-        time = itemView.findViewById(R.id.time);
+        time = itemView.findViewById(R.id.estTime);
         powerSwitch = itemView.findViewById(R.id.power_switch);
         deleteBtn = itemView.findViewById(R.id.deleteBtn);
     }

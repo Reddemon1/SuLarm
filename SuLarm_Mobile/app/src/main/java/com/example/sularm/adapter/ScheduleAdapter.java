@@ -34,7 +34,8 @@ public class ScheduleAdapter extends RecyclerView.Adapter<ScheduleViewHolder> {
 
     @Override
     public void onBindViewHolder(@NonNull ScheduleViewHolder holder, int position) {
-        holder.time.setText(scheduleList.get(position).getTime());
+        String[] est = scheduleList.get(position).getEstimatedTravelTime().split(":");
+        holder.time.setText(est[0]+" hr "+est[1]+ " m");
         holder.location.setText(scheduleList.get(position).getLocationEnd());
         holder.arrivedBefore.setText(scheduleList.get(position).getArrivedBefore());
         if (scheduleList.get(position).getStatus().equals(1)){

@@ -54,8 +54,8 @@ public class AddAlarmActivity extends AppCompatActivity {
     private ScheduleViewModel scheduleViewModel;
     private MapboxNavigation mapboxNavigation;
     private Button newSchedule, findRoute;
-    private MaterialTimePicker timePicker, arrivedPicker, preparationPicker;
-    private TextView time,arrivedTime,preparationTime,backbtn;
+    private MaterialTimePicker timePicker, arrivedPicker, preparationPicker, estimatedPicker;
+    private TextView time,arrivedTime,preparationTime,backbtn, estimatedTime;
     private AutoCompleteTextView locationEnd,locationStart;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -74,6 +74,7 @@ public class AddAlarmActivity extends AppCompatActivity {
         arrivedTime = (TextView) findViewById(R.id.arrivedBeforeInput);
         preparationTime = (TextView) findViewById(R.id.preparationInput);
         backbtn = (TextView) findViewById(R.id.backBtn);
+        estimatedTime = (TextView) findViewById(R.id.estimatedTime);
         newSchedule = (Button) findViewById(R.id.newSchedule);
         findRoute = (Button) findViewById(R.id.findRoute);
         locationEnd = (AutoCompleteTextView) findViewById(R.id.locationEndInput);
@@ -151,7 +152,7 @@ public class AddAlarmActivity extends AppCompatActivity {
         newSchedule.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Schedule schedule = new Schedule(-1, time.getText().toString(), arrivedTime.getText().toString(), "07:00",preparationTime.getText().toString(), locationEnd.getText().toString(),"00 00", locationStart.getText().toString() , "00 00", 1);
+                Schedule schedule = new Schedule(-1, time.getText().toString(), arrivedTime.getText().toString(), estimatedTime.getText().toString(),preparationTime.getText().toString(), locationEnd.getText().toString(),"00 00", locationStart.getText().toString() , "00 00", 1);
 //                Log.e(TAG, "onClick: ", );
                 scheduleViewModel.newSchedule(schedule, getApplicationContext());
                 startActivity(new Intent(AddAlarmActivity.this, MainActivity.class));
@@ -161,7 +162,25 @@ public class AddAlarmActivity extends AppCompatActivity {
 //        setupNavigation();
         findRoute.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View v) {
+            public void onClick(View v) { // masih input manual, API  estimasi masih eror
+                estimatedPicker = new MaterialTimePicker.Builder()
+                        .setTimeFormat(TimeFormat.CLOCK_12H)
+                        .setHour(12)
+                        .setMinute(0)
+                        .setTitleText("Select Alarm Time")
+                        .build();
+                estimatedPicker.show(getSupportFragmentManager(), "androidknowledge");
+                estimatedPicker.addOnPositiveButtonClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        if (estimatedPicker.getHour() >= 12){
+                            estimatedTime.setText(String.format("%02d",estimatedPicker.getHour() - 12) +":"+ String.format("%02d",estimatedPicker.getMinute()));
+                        }else{
+
+                            estimatedTime.setText(String.format("%02d",estimatedPicker.getHour()) +":"+ String.format("%02d",estimatedPicker.getMinute()));
+                        }
+                    }
+                });
                 //Masih Eror
 //                searchAndNavigate(locationStart.getText().toString(),locationEnd.getText().toString());
             }

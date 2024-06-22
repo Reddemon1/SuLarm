@@ -113,22 +113,25 @@ public class MainActivity extends AppCompatActivity implements OnSwitch {
         scheduleViewModel.changeStatus(schedule, getApplicationContext());
 
         String[] time = schedule.getArrivedBefore().split(":");
+        String[] estimated = schedule.getEstimatedTravelTime().split(":");
+        String[] prep = schedule.getPreparationTime().split(":");
         if (schedule.getStatus() == 0) { // Off
             cancelAlarm(position);
         } else { // On
-            setAlarm(position, time);
+            setAlarm(position, time, estimated,prep);
         }
     }
 
 
-    private void setAlarm(int position, String[] time) {
+    private void setAlarm(int position, String[] time, String[] estimated,String[] prep ) {
         calendar = Calendar.getInstance();
         calendar.setTimeInMillis(System.currentTimeMillis());
         calendar.set(Calendar.HOUR_OF_DAY, Integer.parseInt(time[0]));
         calendar.set(Calendar.MINUTE, Integer.parseInt(time[1]));
         calendar.set(Calendar.SECOND, 0);
         calendar.set(Calendar.MILLISECOND, 0);
-
+        calendar.add(Calendar.MINUTE, (Integer.parseInt(estimated[0]) * 60 + Integer.parseInt(estimated[1])) * -1);
+        calendar.add(Calendar.MINUTE, (Integer.parseInt(prep[0]) * 60 + Integer.parseInt(prep[1])) * -1);
         if (calendar.getTimeInMillis() < System.currentTimeMillis()) {
             calendar.add(Calendar.DAY_OF_MONTH, 1);
         }
@@ -139,7 +142,7 @@ public class MainActivity extends AppCompatActivity implements OnSwitch {
         pendingIntent = PendingIntent.getBroadcast(this, position, intent, PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_MUTABLE);
 //        alarmManager.setInexactRepeating(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), AlarmManager.INTERVAL_DAY , pendingIntent);
         alarmManager.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), pendingIntent);
-        Toast.makeText(MainActivity.this, "Alarm Set", Toast.LENGTH_SHORT).show();
+        Toast.makeText(MainActivity.this, "Alarm Set on "+String.format("%02d",calendar.get(Calendar.HOUR_OF_DAY))+ ":"+String.format("%02d",calendar.get(Calendar.MINUTE)), Toast.LENGTH_SHORT).show();
     }
 
     private void cancelAlarm(int position) {
