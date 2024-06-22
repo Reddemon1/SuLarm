@@ -2,6 +2,7 @@ package com.example.sularm.activity;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
@@ -36,7 +37,7 @@ public class NotificationActivity extends AppCompatActivity {
         Intent intent = getIntent();
         Bundle data = intent.getExtras();
         int position = data.getInt("position", -1);
-
+        Log.e("Position", "onCreate: "+position);
         scheduleViewModel = new ViewModelProvider(this).get(ScheduleViewModel.class);
         scheduleViewModel.getScheduleList().observe(this, new Observer<List<Schedule>>() {
             @Override
@@ -44,7 +45,6 @@ public class NotificationActivity extends AppCompatActivity {
                 scList.clear();
                 scList.addAll(schedules);
 
-//                scList.get(position).setStatus(0);
 //                scheduleViewModel.setScheduleList(new MutableLiveData<>(scList));
 //                scheduleViewModel.changeStatus(scList.get(position), getApplicationContext());
             }

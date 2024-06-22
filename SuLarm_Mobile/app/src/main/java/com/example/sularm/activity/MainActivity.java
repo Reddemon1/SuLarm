@@ -30,7 +30,6 @@ import com.example.sularm.adapter.OnSwitch;
 import com.example.sularm.adapter.ScheduleAdapter;
 import com.example.sularm.model.Schedule;
 import com.example.sularm.viewmodel.ScheduleViewModel;
-import com.mapbox.maps.MapView;
 
 import java.sql.Time;
 import java.util.ArrayList;
@@ -44,7 +43,7 @@ public class MainActivity extends AppCompatActivity implements OnSwitch {
     private ScheduleAdapter scheduleAdapter;
     private ScheduleViewModel scheduleViewModel;
     private AlarmManager alarmManager;
-    private Calendar calendar, cal_now;
+    private Calendar calendar;
     private PendingIntent pendingIntent;
     private Button newSchedule;
     private static final int REQUEST_CODE_NOTIFICATION = 1;
@@ -83,7 +82,6 @@ public class MainActivity extends AppCompatActivity implements OnSwitch {
             return insets;
         });
         initData();
-
         newSchedule = (Button) findViewById(R.id.newScBtn);
         newSchedule.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -139,6 +137,7 @@ public class MainActivity extends AppCompatActivity implements OnSwitch {
         Intent intent = new Intent(MainActivity.this, AlarmReceiver.class);
         intent.putExtra("position", position);
         pendingIntent = PendingIntent.getBroadcast(this, position, intent, PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_MUTABLE);
+//        alarmManager.setInexactRepeating(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), AlarmManager.INTERVAL_DAY , pendingIntent);
         alarmManager.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), pendingIntent);
         Toast.makeText(MainActivity.this, "Alarm Set", Toast.LENGTH_SHORT).show();
     }

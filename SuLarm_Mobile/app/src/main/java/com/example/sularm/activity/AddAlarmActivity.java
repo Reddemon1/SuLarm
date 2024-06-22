@@ -18,34 +18,45 @@ import androidx.core.view.WindowInsetsCompat;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.example.sularm.R;
+import com.example.sularm.api.RetrofitClient;
+import com.example.sularm.api.interfaces.MapboxGeocodingService;
+import com.example.sularm.model.CarmenFeature;
+import com.example.sularm.model.GeocodingResponse;
 import com.example.sularm.model.Schedule;
 import com.example.sularm.viewmodel.ScheduleViewModel;
 import com.google.android.material.timepicker.MaterialTimePicker;
 import com.google.android.material.timepicker.TimeFormat;
-import com.mapbox.bindgen.Expected;
-import com.mapbox.geojson.BoundingBox;
-import com.mapbox.geojson.Point;
-import com.mapbox.maps.MapView;
-import com.mapbox.search.autocomplete.PlaceAutocomplete;
-import com.mapbox.search.autocomplete.PlaceAutocompleteOptions;
-import com.mapbox.search.autocomplete.PlaceAutocompleteResult;
-import com.mapbox.search.autocomplete.PlaceAutocompleteSuggestion;
+import com.mapbox.api.directions.v5.DirectionsCriteria;
 
+import com.mapbox.api.directions.v5.models.DirectionsRoute;
+import com.mapbox.api.directions.v5.models.RouteOptions;
+
+import com.mapbox.geojson.Point;
+
+import com.mapbox.navigation.base.options.NavigationOptions;
+
+import com.mapbox.navigation.base.route.NavigationRoute;
+import com.mapbox.navigation.base.route.NavigationRouterCallback;
+import com.mapbox.navigation.base.route.RouterFailure;
+import com.mapbox.navigation.base.route.RouterOrigin;
+import com.mapbox.navigation.core.MapboxNavigation;
+
+import java.util.Arrays;
 import java.util.List;
 
 import kotlin.coroutines.Continuation;
 import kotlin.coroutines.CoroutineContext;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class AddAlarmActivity extends AppCompatActivity {
-    private MapView mapView;
     private ScheduleViewModel scheduleViewModel;
-    private PlaceAutocomplete placeAutocomplete;
-    private Button newSchedule;
-    private List<PlaceAutocompleteSuggestion> suList;
+    private MapboxNavigation mapboxNavigation;
+    private Button newSchedule, findRoute;
     private MaterialTimePicker timePicker, arrivedPicker, preparationPicker;
     private TextView time,arrivedTime,preparationTime,backbtn;
     private AutoCompleteTextView locationEnd,locationStart;
-    private PlaceAutocompleteOptions placeAutocompleteOptions = new PlaceAutocompleteOptions(3);
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -56,7 +67,6 @@ public class AddAlarmActivity extends AppCompatActivity {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
-        String accessToken = getString(R.string.mapbox_access_token);
 //        AddressAutofill.create(accessToken);
 //        PlaceAutocomplete.create();
         scheduleViewModel = new ViewModelProvider(this).get(ScheduleViewModel.class);
@@ -65,6 +75,7 @@ public class AddAlarmActivity extends AppCompatActivity {
         preparationTime = (TextView) findViewById(R.id.preparationInput);
         backbtn = (TextView) findViewById(R.id.backBtn);
         newSchedule = (Button) findViewById(R.id.newSchedule);
+        findRoute = (Button) findViewById(R.id.findRoute);
         locationEnd = (AutoCompleteTextView) findViewById(R.id.locationEndInput);
         locationStart = (AutoCompleteTextView) findViewById(R.id.locationStartInput);
 
@@ -147,39 +158,100 @@ public class AddAlarmActivity extends AppCompatActivity {
                 finish();
             }
         });
-
-
-        PlaceAutocomplete placeAutocomplete = new PlaceAutocomplete() {
-            @Nullable
+//        setupNavigation();
+        findRoute.setOnClickListener(new View.OnClickListener() {
             @Override
-            public Object suggestions(@NonNull String s, @Nullable BoundingBox boundingBox, @Nullable Point point, @NonNull PlaceAutocompleteOptions placeAutocompleteOptions, @NonNull Continuation<? super Expected<Exception, List<PlaceAutocompleteSuggestion>>> continuation) {
-                return null;
-            }
-
-            @Nullable
-            @Override
-            public Object reverse(@NonNull Point point, @NonNull PlaceAutocompleteOptions placeAutocompleteOptions, @NonNull Continuation<? super Expected<Exception, List<PlaceAutocompleteSuggestion>>> continuation) {
-                return null;
-            }
-
-            @Nullable
-            @Override
-            public Object select(@NonNull PlaceAutocompleteSuggestion placeAutocompleteSuggestion, @NonNull Continuation<? super Expected<Exception, PlaceAutocompleteResult>> continuation) {
-                return null;
-            }
-        };
-        placeAutocomplete.suggestions("apapun", null, null, placeAutocompleteOptions, new Continuation<Expected<Exception, List<PlaceAutocompleteSuggestion>>>() {
-            @NonNull
-            @Override
-            public CoroutineContext getContext() {
-                return null;
-            }
-
-            @Override
-            public void resumeWith(@NonNull Object o) {
-
+            public void onClick(View v) {
+                //Masih Eror
+//                searchAndNavigate(locationStart.getText().toString(),locationEnd.getText().toString());
             }
         });
 //        MapboxMap map = new MapboxMap(new );
+    }
+    private void setupNavigation() {
+        NavigationOptions navigationOptions = new NavigationOptions.Builder(this).build();
+        mapboxNavigation = new MapboxNavigation(navigationOptions);
+    }
+    private void searchAndNavigate(String originPlace, String destinationPlace) {
+        MapboxGeocodingService service = RetrofitClient.getRetrofitInstance().create(MapboxGeocodingService.class);
+
+        // Get origin coordinates
+        Call<GeocodingResponse> callOrigin = service.getCoordinates(getString(R.string.mapbox_access_token), originPlace, 1);
+        callOrigin.enqueue(new Callback<GeocodingResponse>() {
+            @Override
+            public void onResponse(Call<GeocodingResponse> call, Response<GeocodingResponse> response) {
+                if (response.isSuccessful() && response.body() != null) {
+                    List<CarmenFeature> features = response.body().getFeatures();
+                    if (!features.isEmpty()) {
+                        CarmenFeature feature = features.get(0);
+                        Point origin = feature.getGeometry();
+                        Call<GeocodingResponse> callDestination = service.getCoordinates(getString(R.string.mapbox_access_token), originPlace, 1);
+                        callDestination.enqueue(new Callback<GeocodingResponse>() {
+                            @Override
+                            public void onResponse(Call<GeocodingResponse> call, Response<GeocodingResponse> response) {
+                                if (response.isSuccessful() && response.body() != null) {
+                                    List<CarmenFeature> features = response.body().getFeatures();
+                                    if (!features.isEmpty()) {
+                                        CarmenFeature feature = features.get(0);
+                                        Point destination = feature.getGeometry();
+                                        findRoute(origin, destination);
+                                    } else {
+                                        Log.i("MapboxGeocoding", "ga ketemu woi");
+                                    }
+                                } else {
+                                    Log.e("MapboxGeocoding", "gagalll: " + response.message());
+                                }
+                            }
+
+                            @Override
+                            public void onFailure(Call<GeocodingResponse> call, Throwable t) {
+                                Log.e("MapboxGeocoding", "Network error for destination", t);
+                            }
+                        });
+                    } else {
+                        Log.i("MapboxGeocoding", "start tak da");
+                    }
+                } else {
+                    Log.e("MapboxGeocoding", "gagalllll start: " + response.message());
+                }
+            }
+
+            @Override
+            public void onFailure(Call<GeocodingResponse> call, Throwable throwable) {
+                Log.e("Geocoding", "Network error", throwable);
+            }
+        });
+    }
+    private void findRoute(Point origin, Point destination) {
+
+        RouteOptions routeOptions = RouteOptions.builder()
+                .coordinatesList(Arrays.asList(origin, destination))
+                .profile(DirectionsCriteria.PROFILE_DRIVING)
+                .build();
+
+        mapboxNavigation.requestRoutes(
+                routeOptions, new NavigationRouterCallback() {
+                    @Override
+                    public void onRoutesReady(@NonNull List<NavigationRoute> list, @NonNull String s) {
+                        if (!list.isEmpty()) {
+                            DirectionsRoute route = list.get(0).getDirectionsRoute();
+                            Log.i("MapboxNavigation", "Route distance: " + route.distance() + " meters");
+                            Log.i("MapboxNavigation", "Estimated travel time: " + route.duration() + " seconds");
+//                            route.duration();
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(@NonNull List<RouterFailure> list, @NonNull RouteOptions routeOptions) {
+                        Log.e("MapboxNavigation", "Error: " + list.get(0).getMessage());
+                    }
+
+                    @Override
+                    public void onCanceled(@NonNull RouteOptions routeOptions, @NonNull String s) {
+                        Log.e("MapboxNavigation", "Route request canceled");
+                    }
+                }
+
+        );
     }
 }
