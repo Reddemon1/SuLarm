@@ -104,7 +104,7 @@ public class ScheduleViewModel extends ViewModel {
 
             @Override
             public void onFailure(Call<Schedule> call, Throwable throwable) {
-                Log.e("Eror bangsat",  "kece",throwable );
+                Log.e("Eror",  "kece",throwable );
             }
         });
     }
